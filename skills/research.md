@@ -1,28 +1,28 @@
 ---
-description: 코드베이스 탐색을 2-3개 각도로 분해해 Explore 에이전트들을 병렬 실행한다. 구현 전 맥락이 필요하거나, 버그 원인을 찾거나, 영향 범위를 파악할 때 사용.
+description: Break a codebase investigation into independent angles and run Explore agents in parallel. Use before implementation, when diagnosing a bug, or when mapping blast radius of a change.
 ---
 
-지금 해결해야 하는 문제를 2-3개의 독립적인 조사 각도로 분해한다.
+Decompose the current question into 2–3 independent investigation angles, then spawn parallel Explore workers.
 
-## 각도 분해 기준
+## Decomposition criteria
 
-- 서로 다른 파일/모듈 영역을 탐색하는 것끼리 분리
-- 한 에이전트의 결과가 다른 에이전트에 필요하지 않은 것끼리 분리
-- 각 에이전트가 15분 안에 끝날 수 있는 범위로 제한
+- Each angle covers a different file area or module boundary
+- No worker depends on another worker's output
+- Each worker can finish within its context window
 
-## 각 Explore 워커 프롬프트에 반드시 포함
+## Every Explore worker prompt must include
 
-1. **탐색 범위**: 어떤 파일/디렉토리/패턴을 볼 것인지
-2. **찾아야 할 것**: 구체적으로 무엇을 찾는지
-3. **목적 문장**: "This research will inform [다음에 할 것] — focus on [강조 포인트]"
-4. **보고 형식**: "Report file paths, line numbers, function signatures. Do not modify files."
+1. **Scope** — which files, directories, or patterns to look at
+2. **What to find** — specifically what the worker is looking for
+3. **Purpose sentence** — "This research will inform [next step] — focus on [emphasis]"
+4. **Output format** — "Report file paths, line numbers, and function signatures. Do not modify files."
 
-## 병렬 실행
+## Parallel launch
 
-단일 메시지에 모든 Agent 호출을 담아 동시에 실행한다.
+Put all Agent calls in a single message. Do not serialize independent research.
 
-워커들이 돌아오면 `/synthesize`로 결과를 합성한다.
+When results arrive, use `/synthesize` to turn findings into a spec before spawning any implementation worker.
 
 ---
 
-지금 바로 각도를 분해하고 워커를 생성한다.
+Decompose now and launch the workers.

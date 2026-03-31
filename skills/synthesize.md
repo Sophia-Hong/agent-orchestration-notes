@@ -1,35 +1,37 @@
 ---
-description: 워커 연구 결과를 구현 스펙으로 합성한다. 연구 워커가 돌아온 직후 사용. "based on your findings"를 쓰고 싶을 때 대신 이걸 쓴다.
+description: Synthesize worker research findings into a concrete implementation spec. Use immediately after research workers return. Use this instead of writing "based on your findings."
 ---
 
-방금 도착한 연구 결과를 직접 읽고 합성한다. 다음 구조로 구현 스펙을 작성한다.
+Read the research findings that just arrived. Synthesize them yourself into a spec. Do not delegate this step.
 
-## 내가 이해한 것
+## What I understood
 
-연구 결과에서 파악한 핵심 사실을 3-5줄로 요약. 모호한 것은 모호하다고 명시.
+Summarize the key facts from the findings in 3–5 lines. If anything is ambiguous, say so explicitly.
 
-## 구현 스펙
+## Implementation spec
 
-다음을 모두 포함한 구체적 스펙을 작성한다:
+Write a spec that includes all of the following:
 
-**변경 대상**
-- 파일: `[정확한 경로]`
-- 위치: 라인 번호 또는 함수명
-- 현재 상태: 지금 어떻게 되어 있는지
-- 변경 내용: 정확히 무엇을 어떻게 바꿀 것인지
+**Target**
+- File: `[exact path]`
+- Location: line number or function name
+- Current state: what it looks like now
+- Change: exactly what to do and how
 
-**완료 기준**
-- 통과해야 할 테스트 / 실행해야 할 명령
-- 커밋 후 보고할 내용
+**Definition of done**
+- Test command to run
+- Typecheck / lint
+- Commit message format or hash to report
 
-**주의사항**
-- 건드리지 말아야 할 부분
-- 예상되는 side effect
+**Constraints**
+- What must not be touched
+- Expected side effects
 
-## 워커 프롬프트 초안
+## Worker prompt draft
 
-위 스펙을 바탕으로 implementation 워커에게 줄 프롬프트 초안을 작성한다.
-워커는 이 대화를 볼 수 없으므로 zero-context에서 완결되어야 한다.
-"based on your findings", "as discussed" 같은 표현은 쓰지 않는다.
+Write the implementation worker prompt based on the spec above.
+The worker has zero context — this prompt must be fully self-contained.
+Do not use "based on your findings", "as discussed", or "as mentioned".
+Prove you understood by including file paths, line numbers, and exact changes.
 
-초안 확인 후 바로 워커를 생성할지 물어본다.
+Ask whether to send the worker now, or revise the spec first.

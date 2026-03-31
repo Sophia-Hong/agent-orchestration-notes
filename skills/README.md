@@ -1,109 +1,106 @@
-# 오케스트레이션 스킬 모음
+# Orchestration Skills
 
-**버전**: v1.0.0
-**작성일**: 2026-03-31
-**작성자**: Sophia (with Claude Code)
-
----
-
-## 작성 배경
-
-2026년 3월 31일, Claude Code 소스코드가 npm 패키지 소스맵을 통해 유출되었다.
-이 레포(`~/projects/Claude Code/claude-code/`)가 그 스냅샷이다.
-
-소스코드를 역설계 분석하면서 Anthropic이 내부적으로 어떻게 오케스트레이터 프롬프트를 설계하고, 에이전트를 정의하고, 품질 게이트를 강제하는지를 파악했다. 분석을 마치고 나서 "이걸 매번 직접 할 수는 없다"는 생각에 반복 가능한 패턴을 스킬로 추출했다.
-
-**핵심 동기**: 멀티에이전트 작업을 할 때 내가 자꾸 저지르는 실수들을 막기 위해.
-- 연구 결과를 읽지 않고 그대로 다음 워커에 넘기는 lazy delegation
-- 구현이 끝나도 검증을 생략하고 "됐을 것 같다"고 넘어가는 것
-- 워커 프롬프트가 zero-context에서 불완전한 채로 나가는 것
-- 병렬로 할 수 있는 것을 순서대로 처리하는 것
+**Version**: v1.0.0
+**Date**: 2026-03-31
 
 ---
 
-## 참조 문서
+## Origin
 
-### 1차 분석 원천
-**`~/projects/Claude Code/claude-code/`** — Claude Code 소스코드 스냅샷 (2026-03-31 유출본)
+On March 31, 2026, the Claude Code source code was exposed via a source map in the npm package. The repository at `~/projects/Claude Code/claude-code/` is that snapshot.
 
-핵심 분석 파일:
-- `src/constants/prompts.ts` — 메인 시스템 프롬프트 조립 로직
-- `src/coordinator/coordinatorMode.ts` — 코디네이터 시스템 프롬프트 전문
-- `src/tools/AgentTool/built-in/verificationAgent.ts` — 검증 에이전트 프롬프트
-- `src/tools/AgentTool/built-in/exploreAgent.ts` — 탐색 에이전트 프롬프트
-- `src/constants/tools.ts` — 도구 접근 제어 상수
+Reverse-engineering the source revealed how Anthropic designs orchestrator prompts, defines agents, and enforces quality gates. These skills are the repeatable patterns extracted from that analysis — turned into tools for my own orchestration work.
 
-### 정리 문서
-**[ORCHESTRATOR_HARNESS_GUIDE.ko.md](~/projects/Claude%20Code/claude-code/ORCHESTRATOR_HARNESS_GUIDE.ko.md)**
-역설계 분석 두 편을 통합한 아키텍처 나침반 문서.
-이 스킬들의 모든 설계 근거가 여기에 있다. 스킬을 수정하거나 새로 만들 때 먼저 참조.
+**Core motivation**: stopping the mistakes I keep making when running multi-agent tasks.
+- Lazy delegation — forwarding research results to the next worker without reading them
+- Skipping verification and assuming implementation worked
+- Writing worker prompts that aren't self-contained
+- Serializing work that could run in parallel
 
 ---
 
-## 내 의도
+## Reference
 
-이 스킬들은 "AI한테 시키기 위한 것"이 아니라 **내가 오케스트레이터로 일할 때 따르기 위한 프로토콜**이다.
+### Source
+`~/projects/Claude Code/claude-code/` — Claude Code source snapshot (leaked 2026-03-31)
 
-Claude Code를 쓸 때 나 자신이 코디네이터가 된다. 코디네이터의 역할은:
-- 직접 실행하는 것이 아니라 **판단하고 분해하고 합성하는 것**
-- 연구 결과를 **직접 이해한 뒤** 스펙으로 변환하는 것
-- 모든 non-trivial 구현은 **독립 검증을 통과한 뒤** 완료로 보고하는 것
+Key files analyzed:
+- `src/constants/prompts.ts` — main system prompt assembly
+- `src/coordinator/coordinatorMode.ts` — coordinator system prompt
+- `src/tools/AgentTool/built-in/verificationAgent.ts` — verification agent prompt
+- `src/tools/AgentTool/built-in/exploreAgent.ts` — explore agent prompt
+- `src/constants/tools.ts` — tool access control constants
 
-이 스킬들은 그 원칙을 실제 워크플로우로 굳혀놓은 것이다.
+### Architecture guide
+**[ORCHESTRATOR_HARNESS_GUIDE.md](../ORCHESTRATOR_HARNESS_GUIDE.md)**
+Full reverse-engineering analysis: system prompt structure, coordinator design, agent definitions, quality systems, and templates. Read this before modifying or adding skills.
 
 ---
 
-## 스킬 목록
+## Intent
 
-### 워크플로우 스킬
+These skills are not for making the AI do things — they are **protocols I follow when acting as the coordinator**.
 
-| 스킬 | 파일 | 언제 |
-|------|------|------|
-| `/orchestrate` | [orchestrate.md](orchestrate.md) | 큰 작업을 처음부터 끝까지 — 4단계 플로우 강제 |
-| `/research` | [research.md](research.md) | 구현 전 코드베이스 탐색이 필요할 때 |
-| `/synthesize` | [synthesize.md](synthesize.md) | 연구 결과가 돌아온 직후 — 스펙으로 변환 |
-| `/spec` | [spec.md](spec.md) | 코딩 시작 전 계획을 명확히 할 때 |
-| `/verify` | [verify.md](verify.md) | 구현 완료 후 — PASS 없이 완료 보고 금지 |
-| `/handoff` | [handoff.md](handoff.md) | 워커 프롬프트를 보내기 전 품질 점검 |
+When using Claude Code, I am the orchestrator. The orchestrator's job is:
+- Not to execute directly, but to **decompose, synthesize, and gate**
+- To **read and understand** research findings before writing specs
+- To require **independent verification** before reporting any non-trivial implementation complete
 
-### 일반 사용 흐름
+These skills encode those principles as enforced workflows.
+
+---
+
+## Skills
+
+### Workflow skills
+
+| Skill | File | When |
+|-------|------|------|
+| `/orchestrate` | [orchestrate.md](orchestrate.md) | Full task from start to finish — enforces all 4 phases |
+| `/research` | [research.md](research.md) | Parallel codebase exploration before implementation |
+| `/synthesize` | [synthesize.md](synthesize.md) | After research returns — convert findings to spec |
+| `/spec` | [spec.md](spec.md) | Write a plan before touching code |
+| `/verify` | [verify.md](verify.md) | After implementation — gate on VERDICT: PASS |
+| `/handoff` | [handoff.md](handoff.md) | Review a worker prompt before sending |
+
+### Typical flows
 
 ```
-처음부터 끝까지:
+Full task:
   /orchestrate
 
-단계별로:
-  /research          ← 탐색 에이전트 병렬 실행
-      ↓ 결과 도착
-  /synthesize        ← 직접 읽고 스펙 작성
+Step by step:
+  /research          ← parallel Explore agents
+      ↓ results arrive
+  /synthesize        ← read findings, write spec
       ↓
-  (구현)
+  (implementation)
       ↓
-  /verify            ← VERDICT: PASS 게이트
+  /verify            ← VERDICT: PASS gate
 
-코딩 전에 계획만:
+Planning first:
   /spec
 
-프롬프트 점검:
-  /handoff           ← 워커에게 보내기 전
+Prompt review:
+  /handoff           ← before spawning any worker
 ```
 
 ---
 
-## 설계 원칙 요약
+## Design principles
 
-이 스킬들이 강제하는 것:
+What these skills enforce:
 
-1. **합성은 위임하지 않는다** — "based on your findings" 금지. `/synthesize`가 이걸 막는다.
-2. **검증은 독립적이어야 한다** — `/verify`는 구현 워커와 다른 에이전트를 쓴다.
-3. **병렬로 할 수 있으면 병렬** — `/research`는 단일 메시지에 다중 호출을 담는다.
-4. **프롬프트는 zero-context에서 완결** — `/handoff`가 이걸 점검한다.
-5. **done의 정의가 있어야 완료** — `/spec`이 완료 기준을 먼저 쓰게 만든다.
+1. **Never delegate synthesis** — "based on your findings" is banned. `/synthesize` makes you do it.
+2. **Verification must be independent** — `/verify` spawns a separate agent that did not do the implementation.
+3. **Parallelize by default** — `/research` puts all Agent calls in one message.
+4. **Worker prompts must be zero-context complete** — `/handoff` checks this.
+5. **Done requires a definition** — `/spec` writes completion criteria before any code is touched.
 
 ---
 
-## 변경 이력
+## Changelog
 
-| 버전 | 날짜 | 내용 |
-|------|------|------|
-| v1.0.0 | 2026-03-31 | 초기 작성 — Claude Code 소스 역설계 기반 6개 스킬 |
+| Version | Date | Notes |
+|---------|------|-------|
+| v1.0.0 | 2026-03-31 | Initial — 6 skills from Claude Code source reverse-engineering |

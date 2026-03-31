@@ -1,44 +1,42 @@
 ---
-description: 코딩 시작 전 구현 스펙을 작성한다. 코드를 건드리기 전에 계획을 명확히 해야 할 때 사용. Plan 에이전트를 활용하거나 직접 스펙을 작성한다.
+description: Write an implementation spec before touching code. Use when a task needs a clear plan first. Runs /research if the codebase isn't sufficiently understood yet.
 ---
 
-코딩을 시작하기 전에 구현 스펙을 먼저 작성한다.
+Write an implementation spec before any code changes.
 
-## 현재 이해 확인
+## Check: is the codebase understood?
 
-코드베이스를 충분히 파악하고 있는가?
-- 파악하고 있으면 → 직접 스펙 작성
-- 더 조사가 필요하면 → `/research` 먼저, 결과 도착 후 스펙 작성
+- Yes → write the spec directly
+- No → run `/research` first, then return here when findings arrive
 
-## 스펙 구조
+## Spec structure
 
-### 문제 / 목표
-한 문장으로: 무엇을 왜 바꾸는가.
+### Problem / goal
+One sentence: what changes, and why.
 
-### 변경 범위
+### Change scope
 ```
-수정할 파일:
-  - [파일 경로]: [어떤 부분을, 왜]
-  - [파일 경로]: [어떤 부분을, 왜]
+Files to modify:
+  - [path]: [what part, why]
+  - [path]: [what part, why]
 
-건드리지 않을 파일:
-  - [파일 경로]: [이유]
+Files not to touch:
+  - [path]: [reason]
 ```
 
-### 구현 접근 방식
-단계별로: 무엇을 먼저 하고, 무엇을 나중에 하는지.
-의존성이 있는 순서라면 그 이유도 포함.
+### Approach
+Step by step: what comes first and why. Call out ordering dependencies.
 
-### 완료 기준
-- [ ] 통과해야 할 테스트 명령
-- [ ] 타입체크 / 린트 통과
-- [ ] 검증할 동작 (curl 예시, 실행 예시 등)
+### Definition of done
+- [ ] Test command that must pass
+- [ ] Typecheck / lint
+- [ ] Observable behavior to verify (curl example, CLI output, etc.)
 
-### 리스크 / 주의사항
-- 예상되는 side effect
-- 기존 동작이 바뀌는 부분
-- 되돌리기 어려운 변경
+### Risks
+- Expected side effects
+- Behavior that changes for existing callers
+- Anything hard to reverse
 
 ---
 
-스펙 작성 후 확인을 구하거나, 바로 구현을 시작할지 물어본다.
+After writing the spec, ask for confirmation or offer to start implementation immediately.
