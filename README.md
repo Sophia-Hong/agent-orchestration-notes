@@ -23,3 +23,9 @@ Claude Code 소스코드 역설계 분석을 바탕으로 작성한 멀티에이
 ## 배경
 
 2026-03-31 Claude Code 소스 역설계 분석 기반. 상세 배경은 [`skills/README.md`](skills/README.md) 참조.
+
+---
+
+## English version
+
+→ [`en/`](en/)
