@@ -9,6 +9,7 @@ Architecture reference and reusable skills for multi-agent orchestration, revers
 ## Documents
 
 - [`ORCHESTRATOR_HARNESS_GUIDE.md`](ORCHESTRATOR_HARNESS_GUIDE.md) — Core architecture reference. System prompt structure, coordinator design, agent definitions, quality systems, and complete template library.
+- [`PROMPT_ANATOMY.md`](PROMPT_ANATOMY.md) — All 7 prompts extracted verbatim with structural annotations, cross-prompt patterns, and 4 reusable templates (Orchestrator, Read-only specialist, Verification, Guide).
 - [`skills/`](skills/) — Orchestration skill files for Claude Code.
 
 ## Skills
