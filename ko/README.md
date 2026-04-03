@@ -12,6 +12,8 @@ Claude Code 소스코드 역설계 분석을 바탕으로 작성한 멀티에이
 - [`skills/`](skills/) — Claude Code에서 바로 사용할 수 있는 오케스트레이션 스킬 파일들.
 
 ## 스킬
+- [`PROMPT_ANATOMY.md`](PROMPT_ANATOMY.md) — 소스에서 추출한 7개 프롬프트 전문, 구조 주석, 프롬프트 간 교차 패턴, 4개 재사용 템플릿.
+- [`TASK_ORCHESTRATION_PATTERNS.md`](TASK_ORCHESTRATION_PATTERNS.md) — 지식 작업을 위한 범용 패턴: 리서치, 분석, 법률 문서, 사건 검토. 도메인 무관 역할 템플릿, 워크플로우 블루프린트, 안티패턴 카탈로그.
 
 `~/.claude/skills/`에 복사하면 `/skill-name`으로 호출 가능.
 
